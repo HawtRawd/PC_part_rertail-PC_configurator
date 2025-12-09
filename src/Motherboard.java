@@ -1,22 +1,22 @@
+import enums.*;
+
 public class Motherboard extends Product{
     private SocketType socket;
     private FormFactor formFactor;
-    private String ramTypeSupported;
+    private RamType ramTypeSupported;
     private int maxRamCapacity;
     private int ramSlots;
-    private StorageInterface[] storageInterfaces;
-    private StorageForm[]  storageForms;
+    private StorageSlot[] storageSlots;
     private PCIE[] pciePorts;
 
-    public Motherboard(int id, String name, String manufacturer, double price, int stock, ComponentType category, SocketType socket, FormFactor formFactor, String ramTypeSupported, int maxRamCapacity, StorageInterface[] storageInterfaces, PCIE[] pciePorts, StorageForm[] storageForms) {
+    public Motherboard(int id, String name, String manufacturer, double price, int stock, ComponentType category, SocketType socket, FormFactor formFactor, RamType ramTypeSupported, int maxRamCapacity, StorageSlot storageSlot, PCIE[] pciePorts) {
         super(id, name, manufacturer, price, stock, category);
         this.socket = socket;
         this.formFactor = formFactor;
         this.ramTypeSupported = ramTypeSupported;
         this.maxRamCapacity = maxRamCapacity;
-        this.storageInterfaces = storageInterfaces;
         this.pciePorts = pciePorts;
-        this.storageForms = storageForms;
+        this.storageSlots = storageSlots;
     }
 
     @Override
@@ -30,19 +30,67 @@ public class Motherboard extends Product{
     public FormFactor getFormFactor() {
         return formFactor;
     }
-    public String getRamTypeSupported() {
+    public RamType getRamTypeSupported() {
         return ramTypeSupported;
     }
     public int getMaxRamCapacity() {
         return maxRamCapacity;
     }
-    public StorageInterface[] getStorageInterfaces() {
-        return storageInterfaces;
+    public int getMaxRamSlots(){
+        return ramSlots;
     }
-    public StorageForm[] getStorageForms() {
-        return storageForms;
+    public int getNVMESlots(){
+        int count = 0;
+        for(int i = 0; i < storageSlots.length; i++){
+            if (storageSlots[i].getType() == StorageInterface.NVME && storageSlots[i].getFormFactor() == StorageForm.NM2) {
+                count++;
+            }
+        }
+        return count;
     }
-    public PCIE[] getPciePorts() {
-        return pciePorts;
+    public int getSATAM2Slots(){
+        int count = 0;
+        for (StorageSlot slot : storageSlots) {
+            if (slot.getType() == StorageInterface.SATA && slot.getFormFactor() == StorageForm.NM2) {
+                count++;
+            }
+        }
+        return count;
+    }
+    public int getStandardSATASlots(){
+        int count = 0;
+        for (StorageSlot slot : storageSlots) {
+            if(slot.getType() == StorageInterface.NVME && (slot.getFormFactor() == StorageForm.S25 || slot.getFormFactor() == StorageForm.S35)){
+                count++;
+            }
+        }
+        return count;
+    }
+
+    public int getPcieX16Slots() {
+        int count = 0;
+        for(int i = 0; i < pciePorts.length; i++){
+            if(pciePorts[i] == PCIE.X16)
+                count++;
+        }
+        return count;
+    }
+
+    public int getPcieX8Slots() {
+        int count = 0;
+        for(int i = 0; i < pciePorts.length; i++){
+            if(pciePorts[i] == PCIE.X8)
+                count++;
+        }
+        return count;
+    }
+
+    public int getPcieX4Slots() {
+        int count = 0;
+        for(int i = 0; i < pciePorts.length; i++){
+            if(pciePorts[i] == PCIE.X4)
+                count++;
+        }
+        return count;
     }
 }

@@ -1,3 +1,7 @@
+import enums.ComponentType;
+import enums.StorageForm;
+import enums.StorageInterface;
+
 public class Storage extends Product{
     private int capacity;
     private StorageForm storageForm;

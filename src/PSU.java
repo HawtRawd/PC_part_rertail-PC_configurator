@@ -1,3 +1,5 @@
+import enums.ComponentType;
+
 public class PSU extends Product {
     private String rating;
     private int wattage;

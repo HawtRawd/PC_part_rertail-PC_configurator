@@ -1,3 +1,7 @@
+import enums.ComponentType;
+import enums.FormFactor;
+import enums.PSUFF;
+
 public class Case extends Product{
     private FormFactor formFactor;
     private double gpuLength;

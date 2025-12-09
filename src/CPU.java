@@ -1,3 +1,6 @@
+import enums.ComponentType;
+import enums.SocketType;
+
 public class CPU extends Product{
     private SocketType socket;
     private int coreCount;

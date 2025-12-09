@@ -1,11 +1,15 @@
+import enums.ComponentType;
+import enums.RamFF;
+import enums.RamType;
+
 public class RAM extends Product{
-    private double storage;
+    private int storage;
     private RamType ramType;
     private RamFF ramFF;
     private int modules;
     private int frequency;
 
-    public RAM(int id, String name, String manufacturer, double price, int stock, ComponentType category, double storage, RamType ramType, RamFF ramFF, int modulus, int frequency) {
+    public RAM(int id, String name, String manufacturer, double price, int stock, ComponentType category, int storage, RamType ramType, RamFF ramFF, int modulus, int frequency) {
         super(id, name, manufacturer, price, stock, category);
         this.storage = storage;
         this.ramType = ramType;
@@ -19,7 +23,7 @@ public class RAM extends Product{
         return "Storage: " + getStorage() + "Type: " + getRamType() + "Form Factor: " + getRamFF() + "Modules: " + getModules() + "Frequency: " + getFrequency();
     }
 
-    public double getStorage() {
+    public int getStorage() {
         return storage;
     }
 

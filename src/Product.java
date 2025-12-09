@@ -1,3 +1,5 @@
+import enums.ComponentType;
+
 public abstract class Product {
     protected int id;
     protected String name;
