@@ -1,38 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
 
-<BorderPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="DashboardController"
-            prefHeight="600.0" prefWidth="900.0">
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DashboardController">
 
     <left>
         <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 20;">
-            <Label text="PC BUILDER" textFill="white" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
-            <Separator/>
-            <Button text="Browse Parts" maxWidth="Infinity" onAction="#showProducts"/>
-            <Button text="My Builds" maxWidth="Infinity"/> <Region VBox.vgrow="ALWAYS"/> <Button text="Logout" maxWidth="Infinity" style="-fx-background-color: #e74c3c;" textFill="white" onAction="#logout"/>
+            <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="PC BUILDER" textFill="white" />
+            <Separator />
+            <Button maxWidth="Infinity" onAction="#showProducts" text="Browse Parts" />
+            <Button maxWidth="Infinity" text="My Builds" /> <Region VBox.vgrow="ALWAYS" /> <Button maxWidth="Infinity" onAction="#logout" style="-fx-background-color: #e74c3c;" text="Logout" textFill="white" />
         </VBox>
     </left>
 
     <top>
-        <HBox spacing="20" style="-fx-padding: 15; -fx-background-color: #ecf0f1;" alignment="CENTER_LEFT">
-            <Label fx:id="welcomeLabel" text="Welcome, User" style="-fx-font-size: 16px;"/>
-            <Region HBox.hgrow="ALWAYS"/> <TextField fx:id="searchField" promptText="Search components..." prefWidth="300"/>
-            <Button text="Search" onAction="#handleSearch"/>
+        <HBox alignment="CENTER_LEFT" spacing="20" style="-fx-padding: 15; -fx-background-color: #ecf0f1;">
+            <Label fx:id="welcomeLabel" style="-fx-font-size: 16px;" text="Welcome, User" />
+            <Region HBox.hgrow="ALWAYS" /> <TextField fx:id="searchField" prefWidth="300" promptText="Search components..." />
+            <Button onAction="#handleSearch" text="Search" />
         </HBox>
     </top>
 
     <center>
         <TableView fx:id="productTable">
             <columns>
-                <TableColumn fx:id="colName" text="Component Name" prefWidth="250"/>
-                <TableColumn fx:id="colCategory" text="Category" prefWidth="150"/>
-                <TableColumn fx:id="colManufacturer" text="Brand" prefWidth="150"/>
-                <TableColumn fx:id="colPrice" text="Price" prefWidth="100"/>
-                <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
+                <TableColumn fx:id="colManufacturer" prefWidth="150" text="Brand" />
+                <TableColumn fx:id="colName" prefWidth="250" text="Component Name" />
+                <TableColumn fx:id="colCategory" prefWidth="150" text="Category" />
+                <TableColumn fx:id="colPrice" prefWidth="100" text="Price" />
+                <TableColumn fx:id="colStock" prefWidth="80" text="Stock" />
             </columns>
         </TableView>
     </center>
