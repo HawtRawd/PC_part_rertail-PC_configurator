@@ -18,7 +18,7 @@
             <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="PC BUILDER" textFill="white" />
             <Separator />
             <Button maxWidth="Infinity" onAction="#showProducts" text="Browse Parts" />
-            <Button maxWidth="Infinity" text="My Builds" /> <Region VBox.vgrow="ALWAYS" /> <Button maxWidth="Infinity" onAction="#logout" style="-fx-background-color: #e74c3c;" text="Logout" textFill="white" />
+            <Button maxWidth="Infinity" onAction="#setToBuildScreen" text="My Builds" /> <Region VBox.vgrow="ALWAYS" /> <Button maxWidth="Infinity" onAction="#logout" style="-fx-background-color: #e74c3c;" text="Logout" textFill="white" />
         </VBox>
     </left>
 

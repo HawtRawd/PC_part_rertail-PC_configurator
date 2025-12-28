@@ -6,6 +6,10 @@ public class GPU extends Product {
     private int wattage;
     private int lengthMm;
 
+    public GPU(){
+        super();
+    }
+
     public GPU(int id, String name, double price, int stock, String imageUrl,
                int manufacturerId, String manufacturerName,
                int categoryId, String categoryName, String pcieTech, double baseClock, int vram, int wattage, int lengthMm) {

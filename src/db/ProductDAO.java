@@ -49,7 +49,7 @@ public class ProductDAO {
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-            stmt.setString(1, "%" + keyword + "%"); // Adds wildcards for partial match
+            stmt.setString(1, "%" + keyword + "%");
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
@@ -69,10 +69,10 @@ public class ProductDAO {
                 rs.getDouble("price"),
                 rs.getInt("stock"),
                 rs.getString("image_url"),
-                rs.getInt("manufacturer_id"),   // The raw foreign key
-                rs.getString("manufacturer_name"), // The joined name
-                rs.getInt("category_id"),       // The raw foreign key
-                rs.getString("category_name")   // The joined name
+                rs.getInt("manufacturer_id"),
+                rs.getString("manufacturer_name"),
+                rs.getInt("category_id"),
+                rs.getString("category_name")
         );
     }
 }

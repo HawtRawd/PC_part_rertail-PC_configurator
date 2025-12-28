@@ -6,6 +6,10 @@ public class Storage extends Product {
     private String connectivity;
     private String capacityGB;
 
+    public Storage(){
+        super();
+    }
+
     public Storage(int id, String name, double price, int stock, String imageUrl, int manufacturerId, String manufacturerName, int categoryId, String categoryName, String type, String connectivity, String capacityGB) {
         super(id, name, price, stock, imageUrl, manufacturerId, manufacturerName, categoryId, categoryName);
         this.type = type;

@@ -28,6 +28,8 @@ public class CPUDAO {
              PreparedStatement stmt = conn.prepareStatement(sql);
              ResultSet rs = stmt.executeQuery()) {
 
+            return mapper.mapResultSet(rs, CPU.class);
+
         } catch (SQLException e) {
             e.printStackTrace();
         }

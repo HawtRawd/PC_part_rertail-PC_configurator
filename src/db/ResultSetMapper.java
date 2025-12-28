@@ -11,28 +11,34 @@ public class ResultSetMapper<T> {
         try {
             while (rs.next()) {
                 T dto = clazz.getDeclaredConstructor().newInstance();
-                Field[] fields = clazz.getDeclaredFields();
 
-                for (Field field : fields) {
-                    field.setAccessible(true);
-                    String colName = toSnakeCase(field.getName());
+                Class<?> currentClass = clazz;
+                while (currentClass != null) {
+                    Field[] fields = currentClass.getDeclaredFields();
 
-                    try {
-                        Object value = rs.getObject(colName);
-                        field.set(dto, value);
-                    } catch (Exception e) {
+                    for (Field field : fields) {
+                        field.setAccessible(true);
+                        String colName = toSnakeCase(field.getName());
+
+                        try {
+                            Object value = rs.getObject(colName);
+                            if (value != null) {
+                                field.set(dto, value);
+                            }
+                        } catch (Exception e){}
                     }
+                    currentClass = currentClass.getSuperclass();
                 }
                 outputList.add(dto);
             }
         } catch (Exception e) {
+            System.out.println("Mapper Error: " + e.getMessage());
             e.printStackTrace();
         }
         return outputList;
     }
 
     private String toSnakeCase(String str) {
-        String result = str.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
-        return result;
+        return str.replaceAll("([a-z])([A-Z]+)", "$1_$2").toLowerCase();
     }
 }

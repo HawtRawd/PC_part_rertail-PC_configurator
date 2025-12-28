@@ -9,6 +9,10 @@ public class CPU extends Product {
     private int tdp;
     private int cores;
 
+    public CPU(){
+        super();
+    }
+
     public CPU(int id, String name, double price, int stock, String imageUrl,
                int manufacturerId, String manufacturerName,
                int categoryId, String categoryName,

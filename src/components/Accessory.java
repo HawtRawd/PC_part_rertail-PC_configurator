@@ -9,6 +9,10 @@ public class Accessory extends Product{
         this.accessoryType = accessory_type;
     }
 
+    public Accessory(){
+        super();
+    }
+
     public String getAccessory_type() {
         return accessoryType;
     }

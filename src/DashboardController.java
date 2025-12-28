@@ -25,6 +25,8 @@ public class DashboardController {
     @FXML private TableColumn<Product, Double> colPrice;
     @FXML private TableColumn<Product, Integer> colStock;
 
+    @FXML private Button buildButton;
+
     private User currentUser;
     private ProductDAO productDAO = new ProductDAO();
 
@@ -64,6 +66,14 @@ public class DashboardController {
     @FXML
     private void logout(ActionEvent event) throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("hello-view.fxml"));
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        stage.setScene(new Scene(loader.load()));
+        stage.show();
+    }
+
+    @FXML
+    private void setToBuildScreen (ActionEvent event) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("build-dashboard.fxml"));
         Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
         stage.setScene(new Scene(loader.load()));
         stage.show();

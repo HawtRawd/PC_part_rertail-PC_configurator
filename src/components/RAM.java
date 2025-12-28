@@ -6,6 +6,10 @@ public class RAM extends Product {
     private int capacityGb;
     private int modules;
 
+    public RAM(){
+        super();
+    }
+
     public RAM(int id, String name, double price, int stock, String imageUrl, int manufacturerId, String manufacturerName, int categoryId, String categoryName, String type, int frequency, int capacityGb, int modules) {
         super(id, name, price, stock, imageUrl, manufacturerId, manufacturerName, categoryId, categoryName);
         this.type = type;

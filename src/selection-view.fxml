@@ -1,0 +1,28 @@
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.Button?>
+<VBox xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml"
+      fx:controller="SelectionController"
+      spacing="10" style="-fx-padding: 15;">
+
+    <Label text="Select a Component" style="-fx-font-size: 16px; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="searchField" promptText="Filter by name..." />
+
+    <TableView fx:id="selectionTable" VBox.vgrow="ALWAYS">
+        <columns>
+            <TableColumn fx:id="colName" text="Name" prefWidth="200"/>
+            <TableColumn fx:id="colPrice" text="Price" prefWidth="80"/>
+        </columns>
+    </TableView>
+
+    <HBox spacing="10" alignment="CENTER_RIGHT">
+        <Button text="Cancel" onAction="#closeWindow"/>
+        <Button text="Select Item" onAction="#confirmSelection" style="-fx-background-color: #3498db;" textFill="white"/>
+    </HBox>
+
+</VBox>

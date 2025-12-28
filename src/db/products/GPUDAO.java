@@ -10,11 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GPUDAO {
-    private Connection getConnection() throws SQLException {
+    private static Connection getConnection() throws SQLException {
         return DatabaseManager.getInstance().getConnection();
     }
 
-    public List<GPU> getAllGpus() throws SQLException {
+    public static List<GPU> getAllGpus() throws SQLException {
         List<GPU> gpus = new ArrayList<>();
 
         String sql = "SELECT p.*, s.*, m.name AS manufacturer_name, c.category AS category_name " +

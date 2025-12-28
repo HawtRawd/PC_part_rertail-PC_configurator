@@ -21,7 +21,7 @@ public class AccessoryDAO {
 
         String sql = "SELECT p.*, s.*, m.name AS manufacturer_name, c.category AS category_name " +
                 "FROM products p " +
-                "JOIN accessories s ON p.id = s.product_id " +
+                "JOIN accessories s ON p.id = s.id " +
                 "JOIN manufacturers m ON p.manufacturer = m.id " +
                 "JOIN product_categories c ON p.category = c.id";
 

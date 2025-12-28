@@ -5,6 +5,10 @@ public class PSU extends Product {
     private String rating;
     private String formFactor;
 
+    public PSU(){
+        super();
+    }
+
     public PSU(int id, String name, double price, int stock, String imageUrl, int manufacturerId, String manufacturerName, int categoryId, String categoryName, String modular, int wattage, String rating, String formFactor) {
         super(id, name, price, stock, imageUrl, manufacturerId, manufacturerName, categoryId, categoryName);
         this.modular = modular;

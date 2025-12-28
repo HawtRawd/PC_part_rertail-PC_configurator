@@ -7,15 +7,17 @@ public class Motherboard extends Product {
     private String formFactor;
     private int maxRamSlots;
     private int maxRamCapacity;
-    private int pcieTech;
+    private String pcieTech;
     private int pcieX16Slots;
-    private int pcieX8Slots;
-    private int pcieX4Slots;
     private int nvmeSlots;
     private int sataSlots;
     private String ramTypeSupported;
 
-    public Motherboard(int id, String name, double price, int stock, String imageUrl, int manufacturerId, String manufacturerName, int categoryId, String categoryName, String socket, String chipset, String formFactor, int maxRamSlots, int maxRamCapacity, int pcieTech, int pcieX16Slots, int pcieX8Slots, int pcieX4Slots, int nvmeSlots, int sataSlots, String ramTypeSupported) {
+    public Motherboard(){
+        super();
+    }
+
+    public Motherboard(int id, String name, double price, int stock, String imageUrl, int manufacturerId, String manufacturerName, int categoryId, String categoryName, String socket, String chipset, String formFactor, int maxRamSlots, int maxRamCapacity, String pcieTech, int pcieX16Slots, int nvmeSlots, int sataSlots, String ramTypeSupported) {
         super(id, name, price, stock, imageUrl, manufacturerId, manufacturerName, categoryId, categoryName);
         this.socket = socket;
         this.chipset = chipset;
@@ -24,8 +26,6 @@ public class Motherboard extends Product {
         this.maxRamCapacity = maxRamCapacity;
         this.pcieTech = pcieTech;
         this.pcieX16Slots = pcieX16Slots;
-        this.pcieX8Slots = pcieX8Slots;
-        this.pcieX4Slots = pcieX4Slots;
         this.nvmeSlots = nvmeSlots;
         this.sataSlots = sataSlots;
         this.ramTypeSupported = ramTypeSupported;
@@ -51,20 +51,12 @@ public class Motherboard extends Product {
         return maxRamCapacity;
     }
 
-    public int getPcieTech() {
+    public String getPcieTech() {
         return pcieTech;
     }
 
     public int getPcieX16Slots() {
         return pcieX16Slots;
-    }
-
-    public int getPcieX8Slots() {
-        return pcieX8Slots;
-    }
-
-    public int getPcieX4Slots() {
-        return pcieX4Slots;
     }
 
     public int getNvmeSlots() {

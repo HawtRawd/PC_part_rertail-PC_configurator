@@ -16,6 +16,9 @@ public class Product {
     private String categoryName;
 
     // Constructor
+    public Product(){
+
+    }
     public Product(int id, String name, double price, int stock, String imageUrl,
                    int manufacturerId, String manufacturerName,
                    int categoryId, String categoryName) {

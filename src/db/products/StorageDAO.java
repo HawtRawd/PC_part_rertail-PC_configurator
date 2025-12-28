@@ -1,7 +1,5 @@
 package db.products;
 
-import components.Motherboard;
-import components.RAM;
 import components.Storage;
 import db.DatabaseManager;
 import db.ResultSetMapper;

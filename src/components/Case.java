@@ -5,6 +5,10 @@ public class Case extends Product {
     private int GPULengthMM;
     private String psuFormFactor;
 
+    public Case(){
+        super();
+    }
+
     public Case(int id, String name, double price, int stock, String imageUrl, int manufacturerId, String manufacturerName, int categoryId, String categoryName, String formFactor, int GPULengthMM, String psuFormFactor) {
         super(id, name, price, stock, imageUrl, manufacturerId, manufacturerName, categoryId, categoryName);
         this.formFactor = formFactor;

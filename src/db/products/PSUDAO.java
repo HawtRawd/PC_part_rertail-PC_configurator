@@ -1,9 +1,6 @@
 package db.products;
 
-import components.Case;
-import components.Motherboard;
 import components.PSU;
-import components.RAM;
 import db.DatabaseManager;
 import db.ResultSetMapper;
 
