@@ -10,7 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="699.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="LoginController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="550.0" prefWidth="699.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.LoginController">
    <children>
       <VBox alignment="CENTER" prefHeight="640.0" prefWidth="893.0" spacing="15.0" StackPane.alignment="CENTER">
          <padding>
@@ -22,6 +22,8 @@
             <TextField fx:id="usernameField" visible="false" />
             <Label fx:id="emText" text="Email:" />
             <TextField fx:id="emailField" />
+            <Label fx:id="adText" text="Address:" visible="false"/>
+            <TextField fx:id="address" visible="false"/>
             <Label fx:id="pasText" text="Password:" />
             <PasswordField fx:id="passwordField" />
             <Label fx:id="conpText" text="Confirm Password:" visible="false" />

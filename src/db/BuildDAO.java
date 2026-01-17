@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BuildDAO {
-    private void setIntOrNull(PreparedStatement stmt, int index, Product product) throws SQLException {
+    private static void setIntOrNull(PreparedStatement stmt, int index, Product product) throws SQLException {
         if (product == null) {
             stmt.setNull(index, Types.INTEGER);
         } else {
@@ -18,7 +18,7 @@ public class BuildDAO {
 
     public List<Build> getAllBuildsForUser(int userId) {
         List<Build> builds = new ArrayList<>();
-        String sql = "SELECT id FROM pc_build WHERE user_id = ? ORDER_BY id DESC";
+        String sql = "SELECT id FROM pc_build WHERE user_id = ? ORDER BY id DESC";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -39,30 +39,32 @@ public class BuildDAO {
         return builds;
     }
 
-    public Build getBuildById(int buildId) {
+    public static Build getBuildById(int buildId) {
         Build build = null;
         String sql = "SELECT * FROM pc_build WHERE id = ?";
 
         try (Connection conn = DatabaseManager.getInstance().getConnection(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, buildId);
             ResultSet rs = stmt.executeQuery();
-            build = new Build();
-            build.setId(rs.getInt("id"));
-            build.setUser_id(rs.getInt("user_id"));
-            build.setBuildName(rs.getString("build_name"));
-            if (rs.getInt("cpu_id") != 0)
-                build.setCpu(new CPUDAO().getCpuById(rs.getInt("cpu_id")));
-            if (rs.getInt("motherboard_id") != 0)
-                build.setMobo(new MoboDAO().getMoboById(rs.getInt("motherboard_id")));
-            if (rs.getInt("psu_id") != 0)
-                build.setPsu(new PSUDAO().getPsuById(rs.getInt("psu_id")));
-            if (rs.getInt("case_id") != 0)
-                build.setPcCase(new CaseDAO().getCaseById(rs.getInt("case_id")));
-            build.setGpus(getGpusForBuild(buildId));
-            build.setRams(getRamForBuild(buildId));
-            build.setStorages(getStorageForBuild(buildId));
-            build.setAccessories(getAccsForBuild(buildId));
-            build.calculateTotal();
+            if (rs.next()) {
+                build = new Build();
+                build.setId(rs.getInt("id"));
+                build.setUser_id(rs.getInt("user_id"));
+                build.setBuildName(rs.getString("build_name"));
+                if (rs.getInt("cpu_id") != 0)
+                    build.setCpu(new CPUDAO().getCpuById(rs.getInt("cpu_id")));
+                if (rs.getInt("motherboard_id") != 0)
+                    build.setMobo(new MoboDAO().getMoboById(rs.getInt("motherboard_id")));
+                if (rs.getInt("psu_id") != 0)
+                    build.setPsu(new PSUDAO().getPsuById(rs.getInt("psu_id")));
+                if (rs.getInt("case_id") != 0)
+                    build.setPcCase(new CaseDAO().getCaseById(rs.getInt("case_id")));
+                build.setGpus(getGpusForBuild(buildId));
+                build.setRams(getRamForBuild(buildId));
+                build.setStorages(getStorageForBuild(buildId));
+                build.setAccessories(getAccsForBuild(buildId));
+                build.calculateTotal();
+            }
         }
         catch(SQLException e){
             e.printStackTrace();
@@ -70,19 +72,27 @@ public class BuildDAO {
         return build;
     }
 
-    public boolean saveBuild(Build build) {
+    public static boolean saveBuild(Build build) {
         double total = build.calculateTotal();
+        boolean isUpdate = build.getId() > 0;
+        String sql;
 
-        String sqlBuild = "INSERT INTO pc_build (user_id, build_name, total_price, " +
-                "cpu_id, motherboard_id, psu_id, case_id, cooler_id) " +
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        if (isUpdate) {
+            sql = "UPDATE pc_build SET user_id=?, build_name=?, total_price=?, " +
+                    "cpu_id=?, motherboard_id=?, psu_id=?, case_id=?, cooler_id=? WHERE id=?";
+        } else {
+            sql = "INSERT INTO pc_build (user_id, build_name, total_price, " +
+                    "cpu_id, motherboard_id, psu_id, case_id, cooler_id) " +
+                    "VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id";
+        }
 
         try (Connection conn = DatabaseManager.getInstance().getConnection()) {
             conn.setAutoCommit(false);
 
+            int buildId = -1;
+
             try {
-                int buildId = -1;
-                try (PreparedStatement stmt = conn.prepareStatement(sqlBuild)) {
+                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
                     stmt.setInt(1, build.getUser_id());
                     stmt.setString(2, build.getBuildName());
                     stmt.setDouble(3, total);
@@ -93,12 +103,25 @@ public class BuildDAO {
                     setIntOrNull(stmt, 7, build.getPcCase());
                     setIntOrNull(stmt, 8, build.getCooler());
 
-                    ResultSet rs = stmt.executeQuery();
-                    if (rs.next()) buildId = rs.getInt("id");
+                    if (isUpdate) {
+                        stmt.setInt(9, build.getId());
+                        stmt.executeUpdate();
+                        buildId = build.getId();
+                    } else {
+                        ResultSet rs = stmt.executeQuery();
+                        if (rs.next()) buildId = rs.getInt("id");
+                    }
                 }
 
                 if (build.getGpus() != null && !build.getGpus().isEmpty()) {
-                    String sqlGpu = "INSERT INTO pc_build_gpu (build_id, gpu_id) VALUES (?, ?)";
+                    if (isUpdate) {
+                        try (PreparedStatement delStmt = conn.prepareStatement("DELETE FROM pc_build_gpus WHERE build_id=?")) {
+                            delStmt.setInt(1, buildId);
+                            delStmt.executeUpdate();
+                        }
+                    }
+
+                    String sqlGpu = "INSERT INTO pc_build_gpus (build_id, gpu_id) VALUES (?, ?)";
                     try (PreparedStatement stmt = conn.prepareStatement(sqlGpu)) {
                         for (GPU gpu : build.getGpus()) {
                             stmt.setInt(1, buildId);
@@ -110,6 +133,12 @@ public class BuildDAO {
                 }
 
                 if (build.getRams() != null && !build.getRams().isEmpty()) {
+                    if (isUpdate) {
+                        try (PreparedStatement delStmt = conn.prepareStatement("DELETE FROM pc_build_ram WHERE build_id=?")) {
+                            delStmt.setInt(1, buildId);
+                            delStmt.executeUpdate();
+                        }
+                    }
                     String sqlRam = "INSERT INTO pc_build_ram (build_id, ram_id) VALUES (?, ?)";
                     try (PreparedStatement stmt = conn.prepareStatement(sqlRam)) {
                         for (RAM ram : build.getRams()) {
@@ -122,6 +151,12 @@ public class BuildDAO {
                 }
 
                 if (build.getStorages() != null && !build.getStorages().isEmpty()) {
+                    if (isUpdate) {
+                        try (PreparedStatement delStmt = conn.prepareStatement("DELETE FROM pc_build_storage WHERE build_id=?")) {
+                            delStmt.setInt(1, buildId);
+                            delStmt.executeUpdate();
+                        }
+                    }
                     String sqlStorage = "INSERT INTO pc_build_storage (build_id, storage_id) VALUES (?, ?)";
                     try (PreparedStatement stmt = conn.prepareStatement(sqlStorage)) {
                         for (Storage drive : build.getStorages()) {
@@ -133,12 +168,18 @@ public class BuildDAO {
                     }
                 }
 
-                if(build.getAccessories() != null && !build.getAccessories().isEmpty()){
-                    String sqlAccesories = "INSERT INTO pc_build_accessories (build_id, accessories_id) VALUES (?, ?)";
-                    try (PreparedStatement stmt = conn.prepareStatement(sqlAccesories)) {
-                        for(Accessory accessory : build.getAccessories()) {
+                if (build.getAccessories() != null && !build.getAccessories().isEmpty()) {
+                    if (isUpdate) {
+                        try (PreparedStatement delStmt = conn.prepareStatement("DELETE FROM pc_build_accessories WHERE build_id=?")) {
+                            delStmt.setInt(1, buildId);
+                            delStmt.executeUpdate();
+                        }
+                    }
+                    String sqlAcc = "INSERT INTO pc_build_accessories (build_id, accessory_id) VALUES (?, ?)";
+                    try (PreparedStatement stmt = conn.prepareStatement(sqlAcc)) {
+                        for (Accessory acc : build.getAccessories()) {
                             stmt.setInt(1, buildId);
-                            stmt.setInt(2, accessory.getId());
+                            stmt.setInt(2, acc.getId());
                             stmt.addBatch();
                         }
                         stmt.executeBatch();
@@ -147,6 +188,7 @@ public class BuildDAO {
 
                 conn.commit();
                 return true;
+
             } catch (SQLException e) {
                 conn.rollback();
                 e.printStackTrace();
@@ -157,9 +199,9 @@ public class BuildDAO {
             return false;
         }
     }
-    private List<GPU> getGpusForBuild(int buildId) {
+    private static List<GPU> getGpusForBuild(int buildId) {
         List<GPU> list = new ArrayList<>();
-        String sql = "SELECT gpu_id FROM pc_build_gpu WHERE build_id = ?";
+        String sql = "SELECT gpu_id FROM pc_build_gpus WHERE build_id = ?";
         GPUDAO dao = new GPUDAO();
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
@@ -174,7 +216,7 @@ public class BuildDAO {
         return list;
     }
 
-    private List<RAM> getRamForBuild(int buildId) {
+    private static List<RAM> getRamForBuild(int buildId) {
         List<RAM> list = new ArrayList<>();
         String sql = "SELECT ram_id FROM pc_build_ram WHERE build_id = ?";
         RAMDAO dao = new RAMDAO();
@@ -191,7 +233,7 @@ public class BuildDAO {
         return list;
     }
 
-    private List<Storage> getStorageForBuild(int buildId) {
+    private static List<Storage> getStorageForBuild(int buildId) {
         List<Storage> list = new ArrayList<>();
         String sql = "SELECT storage_id FROM pc_build_storage WHERE build_id = ?";
         StorageDAO dao = new StorageDAO();
@@ -207,9 +249,9 @@ public class BuildDAO {
         } catch (SQLException e) { e.printStackTrace(); }
         return list;
     }
-    private List<Accessory> getAccsForBuild(int buildId) {
+    private static List<Accessory> getAccsForBuild(int buildId) {
         List<Accessory> list = new ArrayList<>();
-        String sql = "SELECT accessory_id FROM pc_build_ram WHERE build_id = ?";
+        String sql = "SELECT accessory_id FROM pc_build_accessories WHERE build_id = ?";
         AccessoryDAO dao = new AccessoryDAO();
 
         try (Connection conn = DatabaseManager.getInstance().getConnection();
@@ -222,5 +264,38 @@ public class BuildDAO {
             }
         } catch (SQLException e) { e.printStackTrace(); }
         return list;
+    }
+
+    public static void deleteBuild(int buildId){
+        String sql = "DELETE FROM pc_build WHERE id = ?";
+        String sqlGpus = "DELETE FROM pc_build_gpus WHERE build_id = ?";
+        String sqlRam = "DELETE FROM pc_build_ram WHERE build_id = ?";
+        String sqlStorage = "DELETE FROM pc_build_storage WHERE build_id = ?";
+        String sqlAcc = "DELETE FROM pc_build_accessories WHERE build_id = ?";
+
+        try (Connection conn = DatabaseManager.getInstance().getConnection()){
+            try (PreparedStatement stmt = conn.prepareStatement(sqlGpus)){
+            stmt.setInt(1, buildId);
+            stmt.executeUpdate();
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(sqlRam)) {
+                stmt.setInt(1, buildId);
+                stmt.executeUpdate();
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(sqlStorage)) {
+                stmt.setInt(1, buildId);
+                stmt.executeUpdate();
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(sqlAcc)) {
+                stmt.setInt(1, buildId);
+                stmt.executeUpdate();
+            }
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, buildId);
+                stmt.executeUpdate();
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

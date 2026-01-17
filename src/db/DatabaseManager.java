@@ -6,9 +6,9 @@ import java.sql.SQLException;
 
 public class DatabaseManager {
 
-    private static final String DB_URL = "jdbc:postgresql://localhost:5432/pcs";
-    private static final String DB_USER = "postgres";
-    private static final String DB_PASS = "tryagain";
+    private static final String DB_URL = "jdbc:postgresql://ep-solitary-paper-agmjorbv-pooler.c-2.eu-central-1.aws.neon.tech/neondb?sslmode=require";
+    private static final String DB_USER = "neondb_owner";
+    private static final String DB_PASS = "npg_7RVwoua5BlnK";
 
     private static DatabaseManager instance;
 

@@ -6,8 +6,8 @@ public class CPU extends Product {
     private String socket;
     private double baseClock;
     private double boostClock;
-    private int tdp;
-    private int cores;
+    private double tdp;
+    private int numberOfCores;
 
     public CPU(){
         super();
@@ -23,7 +23,7 @@ public class CPU extends Product {
         this.baseClock = baseClock;
         this.boostClock = boostClock;
         this.tdp = tdp;
-        this.cores = cores;
+        this.numberOfCores = cores;
     }
 
     public String getSocket() {
@@ -38,11 +38,11 @@ public class CPU extends Product {
         return boostClock;
     }
 
-    public int getTdp() {
+    public double getTdp() {
         return tdp;
     }
 
     public int getCores() {
-        return cores;
+        return numberOfCores;
     }
 }

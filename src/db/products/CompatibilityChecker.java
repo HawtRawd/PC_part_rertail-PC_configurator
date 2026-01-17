@@ -1,7 +1,8 @@
+package db.products;
+
 import components.*;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class CompatibilityChecker {
@@ -22,11 +23,11 @@ public class CompatibilityChecker {
                 for (GPU gpu : gpus)
                     totalWattage += gpu.getWattage();
             }
-            totalWattage += 50; //buffer
+            totalWattage += 150;
 
             if (psu.getWattage() < totalWattage) {
                 warnings.add("Warning: PSU Wattage (" + psu.getWattage() + "W) is too low. " +
-                        "Estimated usage is " + totalWattage + "W.");
+                        "Estimated usage is " + (totalWattage) + "W.");
             }
         }
         if (mobo != null && !ramList.isEmpty()) {
@@ -56,13 +57,6 @@ public class CompatibilityChecker {
             }
         }
 
-        if(psu != null && casse != null){
-            if(psu.getFormFactor() != casse.getPsuFormFactor()){
-                warnings.add("Physical Error: The '" + casse.getName() + "' case (Max: " + casse.getFormFactor() +
-                        ") will not fit the '" + psu.getName() + " PSU (" + psu.getFormFactor() + ").");
-            }
-        }
-
         if(!gpus.isEmpty() && casse != null){
             for(GPU gpu : gpus) {
                 if (gpu.getLengthMm() > casse.getGPULengthMM())
@@ -75,9 +69,9 @@ public class CompatibilityChecker {
             if(gpus.size() > mobo.getPcieSlots())
                 warnings.add("Error: Not enough PCIE X16 slots on the motherboard for the selected GPUs!");
             for(GPU gpu: gpus){
-                if(gpu.getPcieTech() != mobo.getPcieTech())
+                if(!gpu.getPcieTech().equals(mobo.getPcieTech()))
                     warnings.add("Warning: PCIE tech mismatch! GPUs will run, but at slower speeds. Consider changing one of these components: "
-                    + "GPU: " + gpu.getPcieTech() + "Mobo: " + mobo.getPcieTech());
+                    + "GPU: " + gpu.getPcieTech() + ". Mobo: " + mobo.getPcieTech());
             }
             System.out.println("DEBUG: GPU Count = " + gpus.size() + ", Mobo Slots = " + mobo.getPcieSlots());
         }

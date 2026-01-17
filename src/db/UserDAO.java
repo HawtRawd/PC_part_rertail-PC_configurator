@@ -1,7 +1,6 @@
 package db;
-import db.products.User;
+import components.User;
 
-import java.sql.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -27,7 +26,8 @@ public class UserDAO {
                             rs.getInt("id"),
                             rs.getString("username"),
                             rs.getString("email"),
-                            rs.getString("password_hash")
+                            rs.getString("password_hash"),
+                            rs.getString("address")
                     );
                 }
             }
@@ -37,8 +37,8 @@ public class UserDAO {
         return null;
     }
 
-    public boolean registerUser(String username, String email, String password) {
-        String sql = "INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)";
+    public boolean registerUser(String username, String email, String password, String address) {
+        String sql = "INSERT INTO users (username, email, password_hash, address) VALUES (?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -46,6 +46,7 @@ public class UserDAO {
             stmt.setString(1, username);
             stmt.setString(2, email);
             stmt.setString(3, password);
+            stmt.setString(4, address);
 
             int rows = stmt.executeUpdate();
             return rows > 0;

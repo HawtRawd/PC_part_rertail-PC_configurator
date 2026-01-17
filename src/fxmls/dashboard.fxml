@@ -11,14 +11,16 @@
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="DashboardController">
+<BorderPane prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controllers.DashboardController">
 
     <left>
         <VBox spacing="10" style="-fx-background-color: #2c3e50; -fx-padding: 20;">
             <Label style="-fx-font-size: 18px; -fx-font-weight: bold;" text="PC BUILDER" textFill="white" />
             <Separator />
             <Button maxWidth="Infinity" onAction="#showProducts" text="Browse Parts" />
-            <Button maxWidth="Infinity" onAction="#setToBuildScreen" text="My Builds" /> <Region VBox.vgrow="ALWAYS" /> <Button maxWidth="Infinity" onAction="#logout" style="-fx-background-color: #e74c3c;" text="Logout" textFill="white" />
+            <Button maxWidth="Infinity" onAction="#setToBuildsScreen" text="My Builds" />
+            <Button maxWidth="Infinity" onAction="#setToCartScreen" text="Cart" />
+            <Button maxWidth="Infinity" onAction="#setToOrdersScreen" text="Orders" /> <Region VBox.vgrow="ALWAYS" /> <Button maxWidth="Infinity" onAction="#logout" style="-fx-background-color: #e74c3c;" text="Logout" textFill="white" />
         </VBox>
     </left>
 
@@ -33,11 +35,15 @@
     <center>
         <TableView fx:id="productTable">
             <columns>
-                <TableColumn fx:id="colManufacturer" prefWidth="150" text="Brand" />
+                <TableColumn fx:id="colImage" text="Image" prefWidth="80" style="-fx-alignment: CENTER;"/>
+
+                <TableColumn fx:id="colManufacturer" prefWidth="120" text="Brand" />
                 <TableColumn fx:id="colName" prefWidth="250" text="Component Name" />
-                <TableColumn fx:id="colCategory" prefWidth="150" text="Category" />
+                <TableColumn fx:id="colCategory" prefWidth="120" text="Category" />
                 <TableColumn fx:id="colPrice" prefWidth="100" text="Price" />
                 <TableColumn fx:id="colStock" prefWidth="80" text="Stock" />
+
+                <TableColumn fx:id="colAction" text="Add" prefWidth="80" style="-fx-alignment: CENTER;"/>
             </columns>
         </TableView>
     </center>

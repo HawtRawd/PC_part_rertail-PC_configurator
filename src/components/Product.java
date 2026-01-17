@@ -7,11 +7,9 @@ public class Product {
     private int stock;
     private String imageUrl;
 
-    // Foreign Key IDs (Used for database Logic)
     private int manufacturerId;
     private int categoryId;
 
-    // Display Names (Fetched via SQL JOINs)
     private String manufacturerName;
     private String categoryName;
 
@@ -33,7 +31,6 @@ public class Product {
         this.categoryName = categoryName;
     }
 
-    // Getters
     public int getId() { return id; }
     public String getName() { return name; }
     public double getPrice() { return price; }

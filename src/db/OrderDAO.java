@@ -1,78 +1,51 @@
 package db;
 
-import components.Build;
-import components.Product;
+import components.User;
+import models.CartItem;
+import models.Order;
 import java.sql.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class OrderDAO {
 
-    /**
-     * Places an order that can contain both single products AND full builds.
-     */
-    public boolean placeMixedOrder(int userId, List<Product> singleProducts, List<Integer> buildIds) {
+    public boolean checkout(User user, List<CartItem> cartItems) {
+        String insertOrder = "INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, ?) RETURNING id";
+        String insertItem = "INSERT INTO order_items (order_id, product_id, build_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?, ?)";
 
-        // 1. Calculate Total Price
-        double total = 0;
-        for (Product p : singleProducts) total += p.getPrice();
-
-        // (You would need a helper method to get price of builds, assuming 0 for now to keep code simple)
-        // double buildTotal = getBuildPrice(buildIds);
-        // total += buildTotal;
-
-        String sqlOrder = "INSERT INTO orders (user_id, total_price) VALUES (?, ?) RETURNING id";
-        String sqlItemProduct = "INSERT INTO order_items (order_id, product_id, price_at_purchase) VALUES (?, ?, ?)";
-        String sqlItemBuild = "INSERT INTO order_items (order_id, build_id, price_at_purchase) VALUES (?, ?, ?)";
-
-        String sqlDeductStock = "UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0";
+        double total = cartItems.stream().mapToDouble(CartItem::getPrice).sum();
 
         try (Connection conn = DatabaseManager.getInstance().getConnection()) {
-            conn.setAutoCommit(false); // Start Transaction
+            conn.setAutoCommit(false);
 
             try {
-                // --- STEP A: CREATE ORDER RECORD ---
                 int orderId = -1;
-                try (PreparedStatement stmt = conn.prepareStatement(sqlOrder)) {
-                    stmt.setInt(1, userId);
+                try (PreparedStatement stmt = conn.prepareStatement(insertOrder)) {
+                    stmt.setInt(1, user.getId());
                     stmt.setDouble(2, total);
+                    stmt.setString(3, "PROCESSING");
+
                     ResultSet rs = stmt.executeQuery();
-                    if (rs.next()) orderId = rs.getInt("id");
+                    if (rs.next()) orderId = rs.getInt(1);
                 }
 
-                // --- STEP B: PROCESS SINGLE PRODUCTS ---
-                for (Product p : singleProducts) {
-                    // 1. Deduct Stock
-                    deductStock(conn, p.getId(), p.getName());
-
-                    // 2. Add to Receipt
-                    try (PreparedStatement stmt = conn.prepareStatement(sqlItemProduct)) {
+                try (PreparedStatement stmt = conn.prepareStatement(insertItem)) {
+                    for (CartItem item : cartItems) {
                         stmt.setInt(1, orderId);
-                        stmt.setInt(2, p.getId());
-                        stmt.setDouble(3, p.getPrice());
-                        stmt.executeUpdate();
-                    }
-                }
 
-                // --- STEP C: PROCESS BUILDS ---
-                for (Integer buildId : buildIds) {
-                    // 1. "Explode" the build to find all part IDs inside it
-                    Build build = BuildDAO.getBuildById(buildId);
-                    List<Integer> allParts = build.getAllPartIds();
-
-                    // 2. Deduct stock for EVERY part in the build
-                    for (int partId : allParts) {
-                        deductStock(conn, partId, "Component in Build #" + buildId);
+                        if (item.getProduct() != null) {
+                            stmt.setInt(2, item.getProduct().getId());
+                            stmt.setObject(3, null);
+                            stmt.setInt(4, 1);
+                        } else if (item.getBuild() != null) {
+                            stmt.setObject(2, null);
+                            stmt.setInt(3, item.getBuild().getId());
+                            stmt.setInt(4, 1);
+                        }
+                        stmt.setDouble(5, item.getPrice());
+                        stmt.addBatch();
                     }
-
-                    // 3. Add the BUILD itself to the receipt (so user sees "My Gaming PC")
-                    // (You'd ideally fetch the build's total price here)
-                    try (PreparedStatement stmt = conn.prepareStatement(sqlItemBuild)) {
-                        stmt.setInt(1, orderId);
-                        stmt.setInt(2, buildId);
-                        stmt.setDouble(3, 0.00); // Replace with actual build price calculation
-                        stmt.executeUpdate();
-                    }
+                    stmt.executeBatch();
                 }
 
                 conn.commit();
@@ -80,7 +53,7 @@ public class OrderDAO {
 
             } catch (SQLException e) {
                 conn.rollback();
-                System.out.println("Order Failed: " + e.getMessage());
+                e.printStackTrace();
                 return false;
             }
         } catch (SQLException e) {
@@ -89,31 +62,29 @@ public class OrderDAO {
         }
     }
 
-    // Helper to deduct stock or throw error
-    private void deductStock(Connection conn, int productId, String itemName) throws SQLException {
-        String sql = "UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, productId);
-            int rows = stmt.executeUpdate();
-            if (rows == 0) {
-                throw new SQLException("Out of Stock: Product ID " + productId + " (" + itemName + ")");
-            }
-        }
-    }
+    public List<Order> getOrdersByUserId(int userId) {
+        List<Order> orders = new ArrayList<>();
+        String sql = "SELECT * FROM orders WHERE user_id = ? ORDER BY created_at DESC";
 
-    // Helper to find all parts inside a build (Queries your Join Tables)
-    private List<Integer> getPartIdsForBuild(Connection conn, int buildId) throws SQLException {
-        List<Integer> ids = new ArrayList<>();
+        try (Connection conn = DatabaseManager.getInstance().getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
-        String sql = "SELECT cpu_id, motherboard_id, psu_id, case_id, cooler_id FROM pc_build WHERE id = ?";
-        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-            stmt.setInt(1, buildId);
+            stmt.setInt(1, userId);
             ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                if (rs.getInt("cpu_id") != 0) ids.add(rs.getInt("cpu_id"));
-                if (rs.getInt("motherboard_id") != 0) ids.add(rs.getInt("motherboard_id"));
+
+            while (rs.next()) {
+                Order order = new Order();
+                order.setId(rs.getInt("id"));
+                order.setUserId(rs.getInt("user_id"));
+                order.setTotalPrice(rs.getDouble("total_price"));
+                order.setOrderDate(rs.getTimestamp("created_at"));
+                order.setStatus(rs.getString("status"));
+                orders.add(order);
             }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-        return ids;
+        return orders;
     }
 }

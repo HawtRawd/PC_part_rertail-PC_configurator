@@ -25,7 +25,11 @@ public class ResultSetMapper<T> {
                             if (value != null) {
                                 field.set(dto, value);
                             }
-                        } catch (Exception e){}
+                        } catch (Exception e){
+                            System.out.println("Mapping Error for field: " + field.getName());
+                            System.out.println("Looking for DB column: " + colName);
+                            System.out.println("Error: " + e.getMessage());
+                        }
                     }
                     currentClass = currentClass.getSuperclass();
                 }

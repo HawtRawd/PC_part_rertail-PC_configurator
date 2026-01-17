@@ -16,11 +16,11 @@ public class ProductDAO {
         List<Product> products = new ArrayList<>();
 
         String sql = "SELECT p.id, p.name, p.price, p.stock, p.image_url, " +
-                "p.manufacturer AS manufacturer_id, m.name AS manufacturer_name, " +
-                "p.category AS category_id, c.category AS category_name " +
+                "p.manufacturer_id AS manufacturer_id, m.name AS manufacturer_name, " +
+                "p.category_id AS category_id, c.category AS category_name " +
                 "FROM products p " +
-                "JOIN manufacturers m ON p.manufacturer = m.id " +
-                "JOIN product_categories c ON p.category = c.id";
+                "JOIN manufacturers m ON p.manufacturer_id = m.id " +
+                "JOIN product_categories c ON p.category_id = c.id";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);

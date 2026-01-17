@@ -53,14 +53,6 @@ public class Build {
         this.buildName = buildName;
     }
 
-    public double getTotalPrice() {
-        return totalPrice;
-    }
-
-    public void setTotalPrice(double totalPrice) {
-        this.totalPrice = totalPrice;
-    }
-
     public CPU getCpu() {
         return cpu;
     }
@@ -146,6 +138,20 @@ public class Build {
         for(Storage storage : storages) total += storage.getPrice();
 
         return total;
+    }
+
+    public int calculateWattage() {
+        int watts = 0;
+        for (GPU gpu : gpus) {
+            System.out.println("GPU: " + gpu.getName() + " | Watts: " + gpu.getWattage());
+            watts += gpu.getWattage();
+        }
+
+        if (cpu != null) {
+            System.out.println("CPU: " + cpu.getName() + " | TDP: " + cpu.getTdp());
+            watts += cpu.getTdp();
+        }
+        return watts;
     }
 
     public List<Integer> getAllPartsIds(){

@@ -1,17 +1,16 @@
 package components;
 
 public class Motherboard extends Product {
-    // Matches 'mobo_specs'
     private String socket;
     private String chipset;
     private String formFactor;
-    private int maxRamSlots;
+    private int ramSlots;
     private int maxRamCapacity;
     private String pcieTech;
     private int pcieSlots;
     private int nvmeSlots;
     private int sataSlots;
-    private String ramTypeSupported;
+    private String ramType;
 
     public Motherboard(){
         super();
@@ -22,13 +21,13 @@ public class Motherboard extends Product {
         this.socket = socket;
         this.chipset = chipset;
         this.formFactor = formFactor;
-        this.maxRamSlots = maxRamSlots;
+        this.ramSlots = maxRamSlots;
         this.maxRamCapacity = maxRamCapacity;
         this.pcieTech = pcieTech;
         this.pcieSlots = pcieSlots;
         this.nvmeSlots = nvmeSlots;
         this.sataSlots = sataSlots;
-        this.ramTypeSupported = ramTypeSupported;
+        this.ramType = ramTypeSupported;
     }
 
     public String getSocket() {
@@ -44,7 +43,7 @@ public class Motherboard extends Product {
     }
 
     public int getMaxRamSlots() {
-        return maxRamSlots;
+        return ramSlots;
     }
 
     public int getMaxRamCapacity() {
@@ -68,6 +67,6 @@ public class Motherboard extends Product {
     }
 
     public String getRamTypeSupported() {
-        return ramTypeSupported;
+        return ramType;
     }
 }

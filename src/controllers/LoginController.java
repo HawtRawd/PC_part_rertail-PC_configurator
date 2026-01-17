@@ -1,5 +1,8 @@
+package controllers;
+
+import components.UserSession;
 import db.UserDAO;
-import db.products.User;
+import components.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -13,14 +16,14 @@ public class LoginController {
 
     @FXML private TextField usernameField;
     @FXML private TextField emailField;
+    @FXML private TextField address;
     @FXML private PasswordField passwordField;
     @FXML private PasswordField confirmPasswordField;
     @FXML private Button actionButton;
     @FXML private Label statusLabel;
     @FXML private Label usText;
-    @FXML private Label emText;
-    @FXML private Label pasText;
     @FXML private Label conpText;
+    @FXML private Label adText;
 
     private boolean isLoginMode = true;
     private UserDAO userDAO = new UserDAO();
@@ -35,12 +38,16 @@ public class LoginController {
             setVisibility(usText, false);
             setVisibility(conpText, false);
             setVisibility(confirmPasswordField, false);
+            setVisibility(address, false);
+            setVisibility(adText, false);
         } else {
             actionButton.setText("Sign Up");
             setVisibility(usernameField, true);
             setVisibility(usText, true);
             setVisibility(conpText, true);
             setVisibility(confirmPasswordField, true);
+            setVisibility(address, true);
+            setVisibility(adText, true);
         }
     }
 
@@ -59,6 +66,7 @@ public class LoginController {
 
             if (loggedInUser != null) {
                 System.out.println("Login Success");
+                UserSession.getInstance().setCurrentUser(loggedInUser);
                 openDashboard(event, loggedInUser);
             } else {
                 statusLabel.setText("Invalid email or password.");
@@ -67,6 +75,7 @@ public class LoginController {
         } else {
             String user = usernameField.getText();
             String confirm = confirmPasswordField.getText();
+            String add = address.getText();
 
             if (!pass.equals(confirm)) {
                 statusLabel.setText("Passwords do not match!");
@@ -77,7 +86,7 @@ public class LoginController {
                 return;
             }
 
-            boolean success = userDAO.registerUser(user, email, pass);
+            boolean success = userDAO.registerUser(user, email, pass, add);
 
             if (success) {
                 statusLabel.setText("Account created! Please Log In.");
@@ -90,7 +99,7 @@ public class LoginController {
 
     private void openDashboard(ActionEvent event, User user) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("dashboard.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxmls/dashboard.fxml"));
             Scene dashboardScene = new Scene(loader.load());
 
             DashboardController controller = loader.getController();

@@ -1,3 +1,5 @@
+package controllers;
+
 import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
@@ -27,11 +29,12 @@ public class SelectionController {
             }
         });
     }
+
     public void setHeader(String title) {
     }
 
     public void initData(List<? extends Product> items, Consumer<Product> callback) {
-        this.selectionTable.setItems(FXCollections.observableArrayList((List<Product>)items));
+        this.selectionTable.setItems(FXCollections.observableArrayList((List<Product>) items));
         this.onItemSelected = callback;
     }
 

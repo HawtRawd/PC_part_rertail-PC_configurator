@@ -28,8 +28,8 @@ public class PSUDAO {
         String sql = "SELECT p.*, s.*, m.name AS manufacturer_name, c.category AS category_name " +
                 "FROM products p " +
                 "JOIN psu_specs s ON p.id = s.product_id " +
-                "JOIN manufacturers m ON p.manufacturer = m.id " +
-                "JOIN product_categories c ON p.category = c.id";
+                "JOIN manufacturers m ON p.manufacturer_id = m.id " +
+                "JOIN product_categories c ON p.category_id = c.id";
 
         ResultSetMapper<PSU> mapper = new ResultSetMapper<>();
         try (Connection conn = getConnection();
