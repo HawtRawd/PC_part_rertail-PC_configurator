@@ -1,5 +1,7 @@
 package db;
 
+import components.Build;
+import components.Product;
 import components.User;
 import models.CartItem;
 import models.Order;
@@ -11,7 +13,7 @@ public class OrderDAO {
 
     public boolean checkout(User user, List<CartItem> cartItems) {
         String insertOrder = "INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, ?) RETURNING id";
-        String insertItem = "INSERT INTO order_items (order_id, product_id, build_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?, ?)";
+        String insertItem = "INSERT INTO order_items (order_id, product_id, build_id, price_at_purchase) VALUES (?, ?, ?, ?)";
         String updateStock = "UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0";
 
         double total = cartItems.stream().mapToDouble(CartItem::getPrice).sum();
@@ -30,29 +32,42 @@ public class OrderDAO {
                     if (rs.next()) orderId = rs.getInt(1);
                 }
 
-                try (PreparedStatement stmt = conn.prepareStatement(insertItem)) {
-                    for (CartItem item : cartItems) {
-                        stmt.setInt(1, orderId);
+                try (PreparedStatement itemStmt = conn.prepareStatement(insertItem);
+                     PreparedStatement stockStmt = conn.prepareStatement(updateStock)) {
 
+                    for (CartItem item : cartItems) {
                         if (item.getProduct() != null) {
-                            stmt.setInt(2, item.getProduct().getId());
-                            stmt.setObject(3, null);
-                            stmt.setInt(4, 1);
-                        } else if (item.getBuild() != null) {
-                            stmt.setObject(2, null);
-                            stmt.setInt(3, item.getBuild().getId());
-                            stmt.setInt(4, 1);
+                            itemStmt.setInt(1, orderId);
+                            itemStmt.setInt(2, item.getProduct().getId());
+                            itemStmt.setObject(3, null);
+                            itemStmt.setDouble(4, item.getPrice());
+                            itemStmt.addBatch();
+
+                            if (!reduceStock(stockStmt, item.getProduct().getId(), item.getProduct().getName())) {
+                                conn.rollback();
+                                return false;
+                            }
                         }
-                        stmt.setDouble(5, item.getPrice());
-                        stmt.addBatch();
+                        else if (item.getBuild() != null) {
+                            itemStmt.setInt(1, orderId);
+                            itemStmt.setObject(2, null);
+                            itemStmt.setInt(3, item.getBuild().getId());
+                            itemStmt.setDouble(4, item.getPrice());
+                            itemStmt.addBatch();
+
+                            if (!reduceBuildStock(stockStmt, item.getBuild())) {
+                                conn.rollback();
+                                return false;
+                            }
+                        }
                     }
-                    stmt.executeBatch();
+                    itemStmt.executeBatch();
                 }
 
                 conn.commit();
                 return true;
 
-            } catch (SQLException e) {
+            } catch (SQLException | OutOfStockException e) {
                 conn.rollback();
                 e.printStackTrace();
                 return false;
@@ -60,6 +75,45 @@ public class OrderDAO {
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
+        }
+    }
+
+    private boolean reduceStock(PreparedStatement stmt, int productId, String productName) throws SQLException, OutOfStockException {
+        stmt.setInt(1, productId);
+        int rowsUpdated = stmt.executeUpdate();
+
+        if (rowsUpdated == 0) {
+            throw new OutOfStockException("Item out of stock: " + productName);
+        }
+        return true;
+    }
+
+    private boolean reduceBuildStock(PreparedStatement stmt, Build build) throws SQLException, OutOfStockException {
+        if (build.getCpu() != null) reduceStock(stmt, build.getCpu().getId(), build.getCpu().getName());
+        if (build.getMobo() != null) reduceStock(stmt, build.getMobo().getId(), build.getMobo().getName());
+        if (build.getPsu() != null) reduceStock(stmt, build.getPsu().getId(), build.getPsu().getName());
+        if (build.getPcCase() != null) reduceStock(stmt, build.getPcCase().getId(), build.getPcCase().getName());
+        if (build.getCooler() != null) reduceStock(stmt, build.getCooler().getId(), build.getCooler().getName());
+
+        if (build.getGpus() != null) {
+            for (Product p : build.getGpus()) reduceStock(stmt, p.getId(), p.getName());
+        }
+        if (build.getRams() != null) {
+            for (Product p : build.getRams()) reduceStock(stmt, p.getId(), p.getName());
+        }
+        if (build.getStorages() != null) {
+            for (Product p : build.getStorages()) reduceStock(stmt, p.getId(), p.getName());
+        }
+        if (build.getAccessories() != null) {
+            for (Product p : build.getAccessories()) reduceStock(stmt, p.getId(), p.getName());
+        }
+
+        return true;
+    }
+
+    private static class OutOfStockException extends Exception {
+        public OutOfStockException(String message) {
+            super(message);
         }
     }
 

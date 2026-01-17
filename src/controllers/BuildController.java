@@ -303,7 +303,7 @@ public class BuildController {
     }
     private void openSelectionPopup(String title, List<? extends Product> items, Consumer<Product> callback) {
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("selection-view.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxmls/selection-view.fxml"));
             Scene scene = new Scene(loader.load());
 
             SelectionController controller = loader.getController();

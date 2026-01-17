@@ -14,6 +14,7 @@ public class SelectionController {
     @FXML private TableView<Product> selectionTable;
     @FXML private TableColumn<Product, String> colName;
     @FXML private TableColumn<Product, Double> colPrice;
+    @FXML private TableColumn<Product, Integer> colStock;
     @FXML private TextField searchField;
 
     private Consumer<Product> onItemSelected;
@@ -22,6 +23,7 @@ public class SelectionController {
     public void initialize() {
         colName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
+        colStock.setCellValueFactory(new PropertyValueFactory<>("stock"));
 
         selectionTable.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2 && selectionTable.getSelectionModel().getSelectedItem() != null) {

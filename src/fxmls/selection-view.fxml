@@ -17,6 +17,7 @@
         <columns>
             <TableColumn fx:id="colName" text="Name" prefWidth="200"/>
             <TableColumn fx:id="colPrice" text="Price" prefWidth="80"/>
+            <TableColumn fx:id="colStock" text="Stock" prefWidth="80"/>
         </columns>
     </TableView>
 
