@@ -12,6 +12,7 @@ public class OrderDAO {
     public boolean checkout(User user, List<CartItem> cartItems) {
         String insertOrder = "INSERT INTO orders (user_id, total_price, status) VALUES (?, ?, ?) RETURNING id";
         String insertItem = "INSERT INTO order_items (order_id, product_id, build_id, quantity, price_at_purchase) VALUES (?, ?, ?, ?, ?)";
+        String updateStock = "UPDATE products SET stock = stock - 1 WHERE id = ? AND stock > 0";
 
         double total = cartItems.stream().mapToDouble(CartItem::getPrice).sum();
 
