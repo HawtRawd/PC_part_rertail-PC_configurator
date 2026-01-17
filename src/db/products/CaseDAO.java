@@ -1,5 +1,6 @@
 package db.products;
 
+import components.CPU;
 import components.Case;
 import db.DatabaseManager;
 import db.ResultSetMapper;
@@ -14,6 +15,11 @@ import java.util.List;
 public class CaseDAO {
     private Connection getConnection() throws SQLException{
         return DatabaseManager.getInstance().getConnection();
+    }
+
+    public Case getCaseById(int id){
+        List<Case> pcCases = getAllCases();
+        return pcCases.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public List<Case> getAllCases() {

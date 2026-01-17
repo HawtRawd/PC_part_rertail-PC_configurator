@@ -1,5 +1,6 @@
 package db.products;
 
+import components.CPU;
 import components.Storage;
 import db.DatabaseManager;
 import db.ResultSetMapper;
@@ -14,6 +15,11 @@ import java.util.List;
 public class StorageDAO {
     private Connection getConnection() throws SQLException{
         return DatabaseManager.getInstance().getConnection();
+    }
+
+    public Storage getStorageById(int id){
+        List<Storage> storages = getAllStorages();
+        return storages.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public List<Storage> getAllStorages() {

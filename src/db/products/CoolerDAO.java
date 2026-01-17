@@ -16,6 +16,11 @@ public class CoolerDAO {
         return DatabaseManager.getInstance().getConnection();
     }
 
+    public Cooler getCoolerById(int id){
+        List<Cooler> coolers = getAllCoolers();
+        return coolers.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+    }
+
     public List<Cooler> getAllCoolers() {
         List<Cooler> coolers = new ArrayList<>();
 

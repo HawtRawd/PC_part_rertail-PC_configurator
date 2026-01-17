@@ -1,5 +1,6 @@
 package db.products;
 
+import components.CPU;
 import components.Motherboard;
 import db.DatabaseManager;
 import db.ResultSetMapper;
@@ -14,6 +15,11 @@ import java.util.List;
 public class MoboDAO {
     private Connection getConnection() throws SQLException{
         return DatabaseManager.getInstance().getConnection();
+    }
+
+    public Motherboard getMoboById(int id){
+        List<Motherboard> mobos = getAllMobos();
+        return mobos.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public List<Motherboard> getAllMobos() {

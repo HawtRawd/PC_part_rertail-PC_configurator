@@ -16,6 +16,11 @@ public class AccessoryDAO {
         return DatabaseManager.getInstance().getConnection();
     }
 
+    public Accessory getAccById(int id){
+        List<Accessory> accs = getAllaccs();
+        return accs.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+    }
+
     public List<Accessory> getAllaccs() {
         List<Accessory> accs = new ArrayList<>();
 

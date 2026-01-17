@@ -1,4 +1,5 @@
 package db.products;
+import components.CPU;
 import db.ResultSetMapper;
 import components.GPU;
 import db.DatabaseManager;
@@ -12,6 +13,11 @@ import java.util.List;
 public class GPUDAO {
     private static Connection getConnection() throws SQLException {
         return DatabaseManager.getInstance().getConnection();
+    }
+
+    public GPU getGpuById(int id) throws SQLException {
+        List<GPU> gpus = getAllGpus();
+        return gpus.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public static List<GPU> getAllGpus() throws SQLException {

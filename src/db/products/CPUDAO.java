@@ -14,6 +14,11 @@ public class CPUDAO {
         return DatabaseManager.getInstance().getConnection();
     }
 
+    public CPU getCpuById(int id){
+        List<CPU> cpus = getAllCpus();
+        return cpus.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
+    }
+
     public List<CPU> getAllCpus() {
         List<CPU> cpus = new ArrayList<>();
 

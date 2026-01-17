@@ -1,5 +1,6 @@
 package db.products;
 
+import components.CPU;
 import components.PSU;
 import db.DatabaseManager;
 import db.ResultSetMapper;
@@ -14,6 +15,11 @@ import java.util.List;
 public class PSUDAO {
     private Connection getConnection() throws SQLException{
         return DatabaseManager.getInstance().getConnection();
+    }
+
+    public PSU getPsuById(int id){
+        List<PSU> psus = getAllPsus();
+        return psus.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public List<PSU> getAllPsus() {

@@ -26,7 +26,7 @@ public class SelectionController {
                 confirmSelection();
             }
         });
-
+    }
     public void setHeader(String title) {
     }
 

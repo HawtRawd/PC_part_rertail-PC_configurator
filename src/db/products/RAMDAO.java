@@ -1,5 +1,6 @@
 package db.products;
 
+import components.CPU;
 import components.RAM;
 import db.DatabaseManager;
 import db.ResultSetMapper;
@@ -14,6 +15,11 @@ import java.util.List;
 public class RAMDAO {
     private Connection getConnection() throws SQLException{
         return DatabaseManager.getInstance().getConnection();
+    }
+
+    public RAM getRamById(int id){
+        List<RAM> rams = getAllRam();
+        return rams.stream().filter(c -> c.getId() == id).findFirst().orElse(null);
     }
 
     public List<RAM> getAllRam() {

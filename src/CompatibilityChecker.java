@@ -72,13 +72,14 @@ public class CompatibilityChecker {
         }
 
         if(!gpus.isEmpty() && mobo != null){
-            if(gpus.size() > mobo.getPcieX16Slots())
+            if(gpus.size() > mobo.getPcieSlots())
                 warnings.add("Error: Not enough PCIE X16 slots on the motherboard for the selected GPUs!");
             for(GPU gpu: gpus){
                 if(gpu.getPcieTech() != mobo.getPcieTech())
                     warnings.add("Warning: PCIE tech mismatch! GPUs will run, but at slower speeds. Consider changing one of these components: "
                     + "GPU: " + gpu.getPcieTech() + "Mobo: " + mobo.getPcieTech());
             }
+            System.out.println("DEBUG: GPU Count = " + gpus.size() + ", Mobo Slots = " + mobo.getPcieSlots());
         }
 
         if(!storageList.isEmpty() && mobo != null){

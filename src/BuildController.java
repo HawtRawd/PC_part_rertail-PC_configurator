@@ -15,6 +15,7 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -40,10 +41,10 @@ public class BuildController {
     private Case selectedCase;
     private PSU selectedPSU;
     private Cooler selectedCooler;
-    private List<RAM> ramKits;
-    private List<GPU> gpus;
-    private List <Storage> storageList;
-    private List <Accessory> accessoryList;
+    private List<RAM> ramKits = new ArrayList<>();
+    private List<GPU> gpus = new ArrayList<>();
+    private List <Storage> storageList = new ArrayList<>();
+    private List <Accessory> accessoryList = new ArrayList<>();
 
     private CompatibilityChecker checker = new CompatibilityChecker();
 
