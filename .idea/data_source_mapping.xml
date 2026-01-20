@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourcePerFileMappings">
-    <file url="file://$PROJECT_DIR$/src/db/OrderDAO.java" value="fdd06300-3e6d-4038-9769-295f3d7db42e" />
-    <file url="file://$PROJECT_DIR$/src/db/UserDAO.java" value="fdd06300-3e6d-4038-9769-295f3d7db42e" />
+    <file url="file://$PROJECT_DIR$/src/db/OrderDAO.java" value="6a5e594b-57f3-4f85-bf5d-f1e4124f9e7a" />
+    <file url="file://$PROJECT_DIR$/src/db/ProductDAO.java" value="6a5e594b-57f3-4f85-bf5d-f1e4124f9e7a" />
+    <file url="file://$PROJECT_DIR$/src/db/UserDAO.java" value="6a5e594b-57f3-4f85-bf5d-f1e4124f9e7a" />
+    <file url="file://$PROJECT_DIR$/src/db/products/AccessoryDAO.java" value="6a5e594b-57f3-4f85-bf5d-f1e4124f9e7a" />
   </component>
 </project>

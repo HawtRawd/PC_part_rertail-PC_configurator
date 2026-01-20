@@ -38,7 +38,7 @@ public class UserDAO {
     }
 
     public boolean registerUser(String username, String email, String password, String address) {
-        String sql = "INSERT INTO users (username, email, password_hash, address) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, email, password_hash, address) VALUES (?, ?, ?, ?)";
 
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {

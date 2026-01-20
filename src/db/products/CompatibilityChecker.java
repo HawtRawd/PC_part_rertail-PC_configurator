@@ -90,7 +90,7 @@ public class CompatibilityChecker {
                 warnings.add("Error: Too many SATA storage options added for the motherboard selected!");
         }
         if (cpu != null && cooler != null) {
-            if (!cpu.getSocket().equalsIgnoreCase(cooler.getSocket())) {
+            if (!cooler.getSocket().contains(cpu.getSocket())) {
                 warnings.add("Warning: CPU Socket (" + cpu.getSocket() +
                         ") does not match Motherboard Socket (" + cooler.getSocket() + ")");
             }
